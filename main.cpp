@@ -16,9 +16,7 @@ void MinBishops(int CurrentQueens, int CurrentBishops);
 
 //bool isAttacked(int y, int x);
 void PlacePiece(int y, int x, bool Queen_Bishop);
-
 bool RemovePiece(int y, int x);
-
 void UpdateCoverage();
 
 
@@ -31,8 +29,8 @@ bool *CoverageBoard_ptr = nullptr;
 //uint8_t * Coverageboard_res_ptr = nullptr;
 
 int PieceLimit = INT_MAX;
-int depth = 0;
-int step = 0;
+//int depth = 0;
+//int step = 0;
 
 //functions
 void MinBishops(int CurrentQueens, int CurrentBishops) {
@@ -248,7 +246,6 @@ int main() {
 
 //    Chessboard_res_ptr = new char[M * N]; //Keeps track of the location of the pieces
 //    Coverageboard_res_ptr = new bool [M * N]; //keeps track of the covered squares;
-
 
     // Initialize the chessboard with a default value (Could maybe be done with memset as well...)
     for (int y = 0; y < M; y++) {
