@@ -9,12 +9,13 @@ using namespace std;
 //definitions for better read-ability
 #define bQueen true
 #define bBishop false
+#define dontMinimizeQueens
 
 //headers
 void displayChessBoard(char* board_ptr);
 void displayCoverage();
 void MinBishops(int CurrentQueens, int CurrentBishops); // recursive algorithm to find the minimum amount of bishops for a given amount of queens on a chessboard.
-void findNmbSolutions(int CurrentQueens, int CurrentBishops); //Recursive algorithm to find the ammount of possible solution
+void findNmbSolutions(int CurrentQueens, int CurrentBishops); //Recursive algorithm to find the amount of possible solution
 void PlacePiece(int y, int x, bool Queen_Bishop);
 bool RemovePiece(int y, int x);
 void UpdateCoverage();
@@ -30,6 +31,7 @@ char* Chessboard_best_ptr = nullptr;
 bool* CoverageBoard_ptr = nullptr;
 int nmbSolutions = 0;
 int ChosenOption = 0;
+
 
 //functions
 void MinBishops(int CurrentQueens, int CurrentBishops) {
@@ -47,6 +49,14 @@ void MinBishops(int CurrentQueens, int CurrentBishops) {
         return;
     }
 
+    #ifdef dontMinimizeQueens
+        if (nmbSolutions > 0) {
+            //stop recursion, when we are not minimizing queens
+            // our best result has already been reached.
+            return;
+        }
+    #endif
+
     //check if a solution has been found.
     if (boardIsCovered()) {
         // we have found a solution.
@@ -57,6 +67,12 @@ void MinBishops(int CurrentQueens, int CurrentBishops) {
 
         //save the best layout
         Chessboard_best_ptr = copyChessboard(Chessboard_ptr, M * N);
+
+        if (CurrentBishops == 0) {
+            //When we dont minimize the amount of queens,
+            // we can stop recursion whenever, we have found a solution when currentBishops are 0
+            nmbSolutions = 1;
+        }
 
 //        cout << endl << "Found a solution!:" << endl;
 //        cout << "Queens: "<< QueensLimit << endl;
@@ -74,6 +90,11 @@ void MinBishops(int CurrentQueens, int CurrentBishops) {
         //adding pieces wont result in shorter solution, so we should quit this loop
         return;
     }
+
+//    if (CurrentBishops >= BishopLimit-1) {
+//        //adding bishops wont result in shorter solution, so we should quit this loop
+//        return;
+//    }
 
     for (int y = 0; y < M; y++) {
         for (int x = 0; x<N; x++) {
@@ -107,7 +128,7 @@ void findNmbSolutions(int CurrentQueens, int CurrentBishops) {
     if (CurrentQueens + CurrentBishops > PieceLimit) {
         // stop recursion, we have to many pieces.
         // also alarm the user of this unnecessary recursion happening.
-        cout << "TO MANY PIECES ON CHESSBOARD, QUITTING THIS RECURSION LOOP"<< endl;
+        cerr << "TO MANY PIECES ON CHESSBOARD, QUITTING THIS RECURSION LOOP"<< endl;
         return;
     }
 
@@ -144,7 +165,7 @@ void findNmbSolutions(int CurrentQueens, int CurrentBishops) {
                     } else {
                         //we are out of pieces but we have not found a solution
                         // it should not be possible to reach this state, so notify user if we end up here.
-                        cout << "OUT OF PIECES" << endl;
+                        cerr << "OUT OF PIECES" << endl;
                     }
 
                     findNmbSolutions(CurrentQueens, CurrentBishops);
@@ -167,7 +188,7 @@ void PlacePiece(int y, int x, bool Queen_Bishop) {
     Piece = (Queen_Bishop) ? 'Q' : 'B';
     // decide which piece
     Chessboard_ptr[x + y * N] = Piece;
-    UpdateCoverage();
+//    UpdateCoverage();
 }
 
 
@@ -179,7 +200,7 @@ bool RemovePiece(int y, int x) {
     } else if (Piece == 'B') {
         Queen_Bishop = false;
     } else {
-        cout << "\n\nError! You tried removing a non-existing piece!!\n\n";
+        cerr << "\n\nError! You tried removing a non-existing piece!!\n\n";
         return false;  // Return false to indicate failure
     }
     Chessboard_ptr[x + y * N] = '-';  // remove piece from board
@@ -250,6 +271,7 @@ void UpdateCoverage() {
 }
 
 bool boardIsCovered() {
+    UpdateCoverage();
     bool board_covered = true;
 
     for (int y = 0; y < M; y++) {
@@ -306,7 +328,6 @@ int main() {
 
     // Use a stringstream to parse the input string
     istringstream iss(input);
-
     // Read M
     if (!(iss >> M)) {
         cerr << "Invalid input for M." << endl;
@@ -328,8 +349,6 @@ int main() {
 
     //print chosen board size
     cout << endl << "Board is an " << M << "x" << N << " board" << endl;
-
-    //cout << typeid(M).name() << endl; // returns i for integers
 
     //Initialize chessboard.
     //Contains chessboard of MxN (Y*X) size,
@@ -359,7 +378,7 @@ int main() {
     if ((ChosenOption < 1) || (ChosenOption > 2)) {
         // user has entered invalid input
         // notify user and end program
-        cout << "Entered invalid option, ending program!" << endl;
+        cerr << "Entered invalid option, ending program!" << endl;
         return -1;
     }
 
