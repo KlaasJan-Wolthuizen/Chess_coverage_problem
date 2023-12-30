@@ -338,9 +338,9 @@ int main() {
     int chosenOption = 0;       //stores the users choice, decides which algorithm is used in this program.
 
     //start screen
-    cout << "--------------------------------------------" << endl;
+    cout << "-------------------------------------------------------" << endl;
     cout << "\t\tChess coverage problem" << endl;
-    cout << "--------------------------------------------" << endl;
+    cout << "-------------------------------------------------------" << endl;
 
     //ask user to input chessboard size
     string input;
@@ -388,7 +388,7 @@ int main() {
     cout << endl;
     cout << "Choose what you want to find:" << endl;
     cout << "1. Find the number of solution to cover the chessboard.\n"
-            "   You enter the amount of Queens and bishops " << endl;
+            "   You enter the amount of queens and bishops " << endl;
     cout << "2. Find the minimum number of bishops necessary to cover the entire chessboard\n"
             "   You enter the amount of queens that may be used." << endl;
 
@@ -404,14 +404,14 @@ int main() {
     }
 
     //ask the user to enter additional information which is necessary for the algorithm
-    cout << "\nEnter the amount of Queens: \n";
+    cout << "\nEnter the amount of queens: \n";
     cin >> queensLimit;
-    cout << "queensLimit is: " << queensLimit << endl;
+    cout << "\nqueensLimit is: " << queensLimit << endl;
 
     if (chosenOption == 1) {
-        cout << "\nEnter the amount of Bishops: \n";
+        cout << "\nEnter the amount of bishops: \n";
         cin >> bishopLimit;
-        cout << "bishopLimit is: " << bishopLimit << endl;
+        cout << "\nbishopLimit is: " << bishopLimit << endl;
         pieceLimit = queensLimit + bishopLimit; //decide the piece limit
     }
 
@@ -431,7 +431,6 @@ int main() {
                 cout << "1 valid solution is: " <<endl;
                 displayChessBoard(chessboardBestPtr);
             }
-
             break;
         case 2:
             //run the recursion algorithm to find the minimum amount of bishops
@@ -449,10 +448,10 @@ int main() {
     }
 
     //calculate the execution time
-    milliseconds ExecutionTime = duration_cast<milliseconds>(stop - start);
+    milliseconds executionTime = duration_cast<milliseconds>(stop - start);
 
     //display the execution time
-    cout << "Execution time was: " << ExecutionTime.count() << " ms" << endl;
+    cout << "Execution time was: " << executionTime.count() << " ms" << endl;
 
     //free memory
     delete[] chessboardPtr;
