@@ -24,7 +24,7 @@ void displayChessBoard(char* board_ptr);                        // Function to d
 void displayCoverage();                                         // Used for debugging
 void minBishops(int currentQueens, int currentBishops);         // Recursive algorithm to find the minimum amount of bishops for a given amount of queens on a chessboard.
 void findNmbSolutions(int currentQueens, int currentBishops);   // Recursive algorithm to find the amount of possible solution
-void placePiece(int y, int x, bool Queen_Bishop);               // Function to place a piece on the chessboard
+void placePiece(int y, int x, bool queenBishop);               // Function to place a piece on the chessboard
 bool removePiece(int y, int x);                                 // Function to remove a piece from the chessboard
 void updateCoverage();                                          // Updates the attack lines of pieces is used by boardIsCovered() function
 bool boardIsCovered();                                          // Checks if all positions on the chessboard are attacked.
@@ -146,7 +146,7 @@ void findNmbSolutions(int currentQueens, int currentBishops) {
     if (currentQueens + currentBishops == pieceLimit) {
         if (boardIsCovered()) {
             // we have found a solution
-            nmbSolutions++;  //increment amount of solutions
+            nmbSolutions++;  // increment amount of solutions
 
             //save the first solution:
             if (nmbSolutions == 1) {
@@ -160,7 +160,7 @@ void findNmbSolutions(int currentQueens, int currentBishops) {
             #endif
         }
         return;
-    } else {//Not all piece are on the board yet so continue adding piece and deepen the level of recursion
+    } else {// Not all piece are on the board yet so continue adding piece and deepen the level of recursion
         for (int y = 0; y < M; y++) {
             for (int x = 0; x<N; x++) {
                 if (chessboardPtr[x + y * N] == '-') {
@@ -174,7 +174,7 @@ void findNmbSolutions(int currentQueens, int currentBishops) {
                         placePiece(y, x, bBishop);
                         currentBishops++;
                     } else {
-                        //we are out of pieces but we have not found a solution
+                        // We are out of pieces but we have not found a solution
                         // it should not be possible to reach this state, so notify user if we end up here.
                         cerr << "\n\nError: Out of pieces!\n\n";
                     }
@@ -182,8 +182,8 @@ void findNmbSolutions(int currentQueens, int currentBishops) {
                     //start the next recursive loop, until all pieces are on the board.
                     findNmbSolutions(currentQueens, currentBishops);
 
-                    // we remove the piece we placed in this recursion loop, in this way more solutions can be discovered.
-                    //we keep track of the amount of queens and bishop on the chessboard.
+                    // We remove the piece we placed in this recursion loop, in this way more solutions can be discovered.
+                    // We keep track of the amount of queens and bishop on the chessboard.
                     if(removePiece(y, x)) {
                         currentQueens--;
                     } else {
@@ -196,33 +196,33 @@ void findNmbSolutions(int currentQueens, int currentBishops) {
 }
 
 
-//Function to place a piece on the chessboard
-void placePiece(int y, int x, bool Queen_Bishop) {
-    char Piece;
-    Piece = (Queen_Bishop) ? 'Q' : 'B';
+// Function to place a piece on the chessboard
+void placePiece(int y, int x, bool queenBishop) {
+    char piece;
+    piece = (queenBishop) ? 'Q' : 'B';
     // decide which piece
-    chessboardPtr[x + y * N] = Piece;
+    chessboardPtr[x + y * N] = piece;
 }
 
 
-//Function to remove a piece from the chessboard
+// Function to remove a piece from the chessboard
 bool removePiece(int y, int x) {
-    char Piece = chessboardPtr[x + y * N];
-    bool Queen_Bishop;
-    if (Piece == 'Q') {
-        Queen_Bishop = true;
-    } else if (Piece == 'B') {
-        Queen_Bishop = false;
+    char piece = chessboardPtr[x + y * N];
+    bool queenBishop;
+    if (piece == 'Q') {
+        queenBishop = true;
+    } else if (piece == 'B') {
+        queenBishop = false;
     } else {
         cerr << "\n\nError: You tried removing a non-existing piece!!\n\n";
         return false;  // Return false to indicate failure
     }
     chessboardPtr[x + y * N] = '-';  // remove piece from board
-    return Queen_Bishop;
+    return queenBishop;
 }
 
 
-//Updates the attack lines of pieces is used by boardIsCovered() function
+// Updates the attack lines of pieces is used by boardIsCovered() function
 void updateCoverage() {
     //clean CoverageBoard
     for (int y = 0; y < M; y++) {
@@ -231,51 +231,51 @@ void updateCoverage() {
         }
     }
 
-    //mark all the attacked positions of pieces
+    // mark all the attacked positions of pieces
     for (int y = 0; y < M; y++) {
         for (int x = 0; x < N; x++) {
             if (chessboardPtr[x + y * N] != '-') { //if not blank space
-                //cover the spot of the piece
+                // cover the spot of the piece
                 coverageBoardPtr[x + y * N] = true;
-                //Queen and Bishop both make diagonal line, so we can draw them regardless of which piece it is.
-                // make diagonal line left upwards
+                // Queen and Bishop both make diagonal line, so we can draw them regardless of which piece it is.
+                // Make diagonal line left upwards
                 for (int i = 1; (y - i >= 0) && (x - i >= 0); i++) {
                     coverageBoardPtr[(x - i) + (y - i) * N] = true;
                 }
 
-                // make diagonal line right upwards
+                // Make diagonal line right upwards
                 for (int i = 1; (y - i >= 0) && (x + i < N); i++) {
                     coverageBoardPtr[(x + i) + (y - i) * N] = true;
                 }
 
-                // make diagonal line left downwards
+                // Make diagonal line left downwards
                 for (int i = 1; (y + i < M) && (x - i >= 0); i++) {
                     coverageBoardPtr[(x - i) + (y + i) * N] = true;
                 }
 
-                // make diagonal line right downwards
+                // Make diagonal line right downwards
                 for (int i = 1; (y + i < M) && (x + i < N); i++) {
                     coverageBoardPtr[(x + i) + (y + i) * N] = true;
                 }
 
                 if (chessboardPtr[x + y * N] == 'Q') {
-                    //Also add the horizontal & vertical lines when the piece is a queen
-                    // left horizontal
+                    // Also add the horizontal & vertical lines when the piece is a queen
+                    // Left horizontal
                     for (int i = 1; (x - i >= 0) && (chessboardPtr[(x - i) + y * N] == '-'); i++) {
                         coverageBoardPtr[(x - i) + y * N] = true;
                     }
 
-                    // right horizontal
+                    // Right horizontal
                     for (int i = 1; (x + i < N) && (chessboardPtr[(x + i) + y * N] == '-'); i++) {
                         coverageBoardPtr[(x + i) + y * N] = true;
                     }
 
-                    // upwards vertical
+                    // Upwards vertical
                     for (int i = 1; (y - i >= 0) && (chessboardPtr[x + (y - i) * N] == '-'); i++) {
                         coverageBoardPtr[x + (y - i) * N] = true;
                     }
 
-                    // downwards vertical
+                    // Downwards vertical
                     for (int i = 1; (y + i < M) && (chessboardPtr[x + (y + i) * N] == '-'); i++) {
                         coverageBoardPtr[x + (y + i) * N] = true;
                     }
@@ -289,21 +289,21 @@ void updateCoverage() {
 //function to check if all position on the chessboard are attacked
 bool boardIsCovered() {
     updateCoverage();   //Updates the attack lines of pieces is used by boardIsCovered() function
-    bool board_covered = true; //set variable to be true before proven to be wrong
+    bool boardCovered = true; //set variable to be true before proven to be wrong
     for (int y = 0; y < M; y++) {
         for (int x = 0; x < N; x++) {
             if (!coverageBoardPtr[x + y * N]) {
-                board_covered = false;
+                boardCovered = false;
                 y = M;
                 break; //break out of x loop, in combination with y = M, exits the y loop as well.
             }
         }
     }
-    return board_covered;
+    return boardCovered;
 }
 
 
-//function to copy contents of the chessboard
+// Function to copy contents of the chessboard
 char* copyChessboard(const char* source, int size) {
     char* destination = new char[size];                 //allocates new memory with the same size as the chessboard
     copy(source, source + size, destination);       //copy's the memory from the source to the destination
@@ -311,7 +311,7 @@ char* copyChessboard(const char* source, int size) {
 }
 
 
-//function to display the ChessBoard
+// Function to display the ChessBoard
 void displayChessBoard(char* board_ptr) {
     for (int y = 0; y < M; y++) {
         cout << endl;                               //adds a newline for every row of the chessboard
@@ -368,13 +368,13 @@ int main() {
         return 1;
     }
 
-    //print chosen board size
+    // Print chosen board size
     cout << endl << "Board is an " << M << "x" << N << " board" << endl;
 
-    //Initialize chessboard.
-    //Contains chessboard of MxN (Y*X) size,
-    chessboardPtr = new char[M * N]; //Keeps track of the location of the pieces
-    coverageBoardPtr = new bool[M * N]; //keeps track of the covered squares;
+    // Initialize chessboard.
+    // Contains chessboard of MxN (Y*X) size,
+    chessboardPtr = new char[M * N]; // Keeps track of the location of the pieces
+    coverageBoardPtr = new bool[M * N]; // Keeps track of the covered squares;
 
     // Initialize the chessboard with a default value
     for (int y = 0; y < M; y++) {
@@ -384,7 +384,7 @@ int main() {
         }
     }
 
-    //cout ask user if the user wants to find minimum amount of bishops or the amount of solutions to cover a chessboard:
+    // Ask user if the user wants to find minimum amount of bishops or the amount of solutions to cover a chessboard:
     cout << endl;
     cout << "Choose what you want to find:" << endl;
     cout << "1. Find the number of solution to cover the chessboard.\n"
@@ -392,18 +392,18 @@ int main() {
     cout << "2. Find the minimum number of bishops necessary to cover the entire chessboard\n"
             "   You enter the amount of queens that may be used." << endl;
 
-    //ask user to choose an algorithm:
+    // Ask user to choose an algorithm:
     cout << "\nEnter 1 or 2 and press enter\n\n";
     cin >> chosenOption;
 
     if ((chosenOption < 1) || (chosenOption > 2)) {
-        // user has entered invalid input
-        // notify user and end program
+        // User has entered invalid input
+        // Notify user and end program
         cerr << "Entered invalid option, ending program!" << endl;
         return 1;
     }
 
-    //ask the user to enter additional information which is necessary for the algorithm
+    // Ask the user to enter additional information which is necessary for the algorithm
     cout << "\nEnter the amount of queens: \n";
     cin >> queensLimit;
     cout << "\nqueensLimit is: " << queensLimit << endl;
@@ -415,29 +415,29 @@ int main() {
         pieceLimit = queensLimit + bishopLimit; //decide the piece limit
     }
 
-    //start timer
+    // Start timer
     high_resolution_clock::time_point start = high_resolution_clock::now(); //start timer
     high_resolution_clock::time_point stop; //initialize stop variable
 
     switch (chosenOption) {
         case 1:
-            //start the recursive function to find the number of solutions
+            // Start the recursive function to find the number of solutions
             findNmbSolutions(0, 0);
-            stop = high_resolution_clock::now(); //stop timer
+            stop = high_resolution_clock::now(); // Stop timer
 
-            //print result to terminal
+            // Print result to terminal
             cout << "There are " << nmbSolutions << " Solution(s)." << endl;
-            if (nmbSolutions > 0) {     //only print chessboard solution when there is a solution.
+            if (nmbSolutions > 0) {     // Only print chessboard solution when there is a solution.
                 cout << "1 valid solution is: " <<endl;
                 displayChessBoard(chessboardBestPtr);
             }
             break;
         case 2:
-            //run the recursion algorithm to find the minimum amount of bishops
+            // Run the recursion algorithm to find the minimum amount of bishops
             minBishops(0, 0);
-            stop = high_resolution_clock::now(); //stop timer
+            stop = high_resolution_clock::now(); // Stop timer
 
-            //show final results
+            // Show final results
             cout << endl << "Found a solution!:" << endl;
             cout << "Queens: " << queensLimit << endl;
             cout << "Bishops: " << bishopLimit << endl;
@@ -447,16 +447,16 @@ int main() {
             break;
     }
 
-    //calculate the execution time
+    // Calculate the execution time
     milliseconds executionTime = duration_cast<milliseconds>(stop - start);
 
-    //display the execution time
+    // Display the execution time
     cout << "Execution time was: " << executionTime.count() << " ms" << endl;
 
-    //free memory
+    // Free memory
     delete[] chessboardPtr;
     delete[] coverageBoardPtr;
     delete[] chessboardBestPtr;
 
-    return 0;   //end program
+    return 0;   //End program
 }
