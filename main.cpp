@@ -449,7 +449,7 @@ int main() {
     }
 
     //calculate the execution time
-    auto ExecutionTime = duration_cast<milliseconds>(stop - start);
+    milliseconds ExecutionTime = duration_cast<milliseconds>(stop - start);
 
     //display the execution time
     cout << "Execution time was: " << ExecutionTime.count() << " ms" << endl;
